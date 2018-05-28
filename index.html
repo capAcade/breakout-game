@@ -9,7 +9,9 @@
     margin: 0;
   }
   canvas {
-    background: #EEE; display: block; margin: 0 auto;
+    display: block;
+    background: #EEE;
+    margin: 0 auto;
   }
   </style>
 </head>
@@ -17,36 +19,99 @@
 <canvas id="myCanvas" width="480" height="320"></canvas>
 
 <script>
-let canvas = document.getElementById('myCanvas');
-let ctx = canvas.getContext('2d');
+// canvas
+const canvas = document.getElementById('myCanvas');
+const ctx = canvas.getContext('2d');
 
-let x = canvas.width/2;
-let y = canvas.height-30;
+// ball
+let x = canvas.width / 2;
+let y = canvas.height - 100;
+let ballRadius = 10;
 let dx = -2;
 let dy = -3;
-let ballRadius = 10;
+let ballColor = '#0095DD';
 
-let drawBall = () => {
+//paddle
+let paddleHeight = 10;
+let paddleWidth = 72;
+let paddleX = (canvas.width - paddleWidth) / 2;
+let rightPressed = false;
+let leftPressed = false;
+
+const drawBall = () => {
   ctx.beginPath();
   ctx.arc(x, y, ballRadius, 0, Math.PI*2);
-  ctx.fillStyle = '#0095DD';
+  ctx.fillStyle = ballColor;
   ctx.fill();
   ctx.closePath();
 }
 
-let draw = () => {
+const drawPaddle = () => {
+    ctx.beginPath();
+    ctx.rect(paddleX, canvas.height - paddleHeight, paddleWidth, paddleHeight);
+    ctx.fillStyle = "#0095DD";
+    ctx.fill();
+    ctx.closePath();
+}
+
+const getRandomColor = () => {
+  let letters = '0123456789abcdef';
+  let color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+const keyDownHandler = (e) => {
+    if(e.keyCode == 39) {
+        rightPressed = true;
+    }
+    else if(e.keyCode == 37) {
+        leftPressed = true;
+    }
+}
+
+const keyUpHandler = (e) => {
+    if(e.keyCode == 39) {
+        rightPressed = false;
+    }
+    else if(e.keyCode == 37) {
+        leftPressed = false;
+    }
+}
+
+document.addEventListener("keydown", keyDownHandler, false);
+document.addEventListener("keyup", keyUpHandler, false);
+
+const draw = () => {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawBall();
+  drawPaddle();
 
-  if(y + dy < 0) {
-  dy = -dy;
-} else if(y + dy > canvas.height) {
-  dy = -dy;
-} else if(x + dx < 0) {
-  dx = -dx;
-} else if(x + dx > canvas.width) {
-  dx = -dx;
-}
+  // Reverse movement of the ball when hitting a border
+  if (x + dx < ballRadius || x + dx > canvas.width - ballRadius) {
+    dx = -dx;
+  } else if(y + dy < ballRadius) {
+    dy = -dy;
+  } else if(y + dy > canvas.height - ballRadius) {
+    if(x > paddleX && x < paddleX + paddleWidth) {
+        dy = -dy;
+        ballColor = getRandomColor();
+        dy--;
+        dx--;
+    } else {
+      document.location.reload();
+    }
+};
+
+  // Move the paddle as long as it does not hit the border
+  if(rightPressed && paddleX < canvas.width-paddleWidth) {
+    paddleX += 7;
+  } else if(leftPressed && paddleX > 0) {
+    paddleX -= 7;
+  }
+
   x += dx;
   y += dy;
 };
