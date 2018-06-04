@@ -23,6 +23,9 @@
 const canvas = document.getElementById('myCanvas');
 const ctx = canvas.getContext('2d');
 
+let score = 0;
+let lives = 3;
+
 // ball
 let startX = canvas.width / 2;
 let startY = canvas.height - 100;
@@ -98,6 +101,18 @@ const getRandomColor = () => {
   return color;
 }
 
+drawScore = () => {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText("Score: " + score, 8, 20);
+}
+
+drawLives = () => {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#0095DD";
+  ctx.fillText("Lives: "+lives, canvas.width-65, 20);
+}
+
 const keyDownHandler = (e) => {
   if(e.keyCode == 39) {
     rightPressed = true;
@@ -116,8 +131,16 @@ const keyUpHandler = (e) => {
   }
 }
 
+mouseMoveHandler = (e) => {
+  let relativeX = e.clientX - canvas.offsetLeft;
+  if(relativeX > 0 && relativeX < canvas.width) {
+    paddleX = relativeX - paddleWidth / 2;
+  }
+}
+
 document.addEventListener("keydown", keyDownHandler, false);
 document.addEventListener("keyup", keyUpHandler, false);
+document.addEventListener("mousemove", mouseMoveHandler, false);
 
 const collisionDetection = () => {
   for(let c = 0; c < brickColumnCount; c++) {
@@ -127,6 +150,11 @@ const collisionDetection = () => {
         if(startX > b.x && startX < b.x + brickWidth && startY > b.y && startY < b.y + brickHeight) {
           speedY = -speedY;
           b.status = 0;
+          score++;
+          if(score == brickRowCount * brickColumnCount) {
+            alert("YOU WIN, CONGRATULATIONS! Your Score: " + score);
+            document.location.reload();
+          }
         }
       }
     }
@@ -139,6 +167,8 @@ const draw = () => {
   drawPaddle();
   drawBricks();
   collisionDetection();
+  drawScore();
+  drawLives();
 
   // Reverse movement of the ball when hitting a border / paddle
   if (startX + speedX < ballRadius || startX + speedX > canvas.width - ballRadius) {
@@ -152,7 +182,17 @@ const draw = () => {
       speedY-=.1;
       speedX-=.1;
     } else {
-      document.location.reload();
+      lives--;
+      if(!lives) {
+        alert("GAME OVER --- Score: " + score);
+        document.location.reload();
+      } else {
+        startX = canvas.width/2;
+        startY = canvas.height-30;
+        speedX = 2;
+        speedY = -2;
+        paddleX = (canvas.width-paddleWidth) / 2;
+      }
     }
   };
 
@@ -166,9 +206,11 @@ const draw = () => {
   // Move the ball
   startX += speedX;
   startY += speedY;
+
+  requestAnimationFrame(draw);
 };
 
-setInterval(draw, 10);
+draw();
 </script>
 </body>
 </html>
