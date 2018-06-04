@@ -179,8 +179,8 @@ const draw = () => {
     if(startX > paddleX && startX < paddleX + paddleWidth) {
       speedY = -speedY;
       ballColor = getRandomColor();
-      speedY-=.1;
-      speedX-=.1;
+      speedY-=.5;
+      speedX-=.5;
     } else {
       lives--;
       if(!lives) {
