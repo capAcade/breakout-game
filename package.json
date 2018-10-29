@@ -1,0 +1,28 @@
+{
+  "name": "break-down",
+  "version": "1.0.0",
+  "description": "This is a html5 game",
+  "main": "main.js",
+  "scripts": {
+    "test": "npm test",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/capAcade/breakout-game.git"
+  },
+  "keywords": [
+    "games",
+    "html5"
+  ],
+  "author": "CapAcade",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/capAcade/breakout-game.git/issues"
+  },
+  "homepage": "https://github.com/capAcade/breakout-game.git#readme",
+  "dependencies": {
+  },
+  "devDependencies": {
+  }
+}
